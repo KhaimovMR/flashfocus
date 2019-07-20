@@ -9,7 +9,8 @@ from xpybutil.ewmh import get_active_window
 from xpybutil.icccm import set_wm_name_checked
 from xpybutil.util import get_atom_name
 
-from flashfocus.xutil import create_message_window, destroy_window, list_mapped_windows
+import flashfocus.ui
+from flashfocus.xutil import create_message_window, destroy_window, list_mapped_windows, set_opacity
 from flashfocus.sockets import init_server_socket
 
 
@@ -78,6 +79,12 @@ class XHandler(Producer):
         if atom_name == "_NET_ACTIVE_WINDOW":
             focused_window = get_active_window().reply()
             logging.info("Focus shifted to %s", focused_window)
+
+            try:
+                set_opacity(focused_window, flashfocus.ui.CONFIG['flash_opacity'])
+            except:
+                pass
+
             self.queue_window(focused_window, "focus_shift")
         elif atom_name == "WM_NAME" and event.window == self.message_window:
             # Received kill signal from server -> terminate the thread

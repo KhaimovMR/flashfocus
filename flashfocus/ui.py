@@ -25,6 +25,7 @@ if sys.stderr.isatty():
 
 # The pid file for flashfocus. Used to ensure that only one instance is active.
 PID = open(os.path.join(RUNTIME_DIR, "flashfocus.pid"), "a")
+CONFIG = None
 
 
 def lock_pid_file():
@@ -110,6 +111,7 @@ def cli(*args, **kwargs):
 
 def init_server(cli_options):
     """Initialize the flashfocus server with given command line options."""
+    global CONFIG
     ensure_single_instance()
 
     if "opacity" in cli_options:
@@ -120,6 +122,7 @@ def init_server(cli_options):
         del cli_options["opacity"]
 
     config = load_merged_config(cli_options)
+    CONFIG = config
 
     logging.info("Initializing with parameters:")
     logging.info("%s", config)
